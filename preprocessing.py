@@ -3,6 +3,7 @@ from sklearn.utils import resample
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from scipy.signal import butter, filtfilt
+import joblib
 
 def fillType(df):
     # Make first row as colum labels
@@ -83,5 +84,7 @@ def preprocessData(X,y):
 
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.fit_transform(X_test)
+
+    joblib.dump(scaler, "scaler.pkl")
 
     return X_train, X_test, y_train, y_test
