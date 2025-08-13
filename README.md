@@ -1,5 +1,5 @@
 # Churn Predictor and Dashboard
-### (Random Forest Classifier in unbalanced discrete data)
+### (Random Forest Classifier for unbalanced discrete data)
 
 ## Contents
 
@@ -13,6 +13,7 @@
 
 <br>
 
+**To run the ML notebook:**
 With Docker installed, run Docker Desktop and the jupyter notebook image with the following command
 
 <br>
@@ -20,6 +21,19 @@ With Docker installed, run Docker Desktop and the jupyter notebook image with th
 ```
 docker run -it --rm -p 8888:8888 -v "${pwd}:/tf/notebooks" tensorflow/tensorflow:latest-jupyter
 ```
+
+<br>
+
+
+**To run Streamlit:**
+Just run the following command
+
+<br>
+
+```
+streamlit run app.py
+```
+
 ## Introduction
 
 This repository was made to build a classifier that predicts Churn rates and displays data using a simple pipeline.
@@ -43,7 +57,7 @@ The Data was collected in MySQL database to make it easy for all the application
 
 ## Conclusion
 
-Thanks for reading up until here. I had a ton of fun doing this notebook and got a lot of useful insights on Convolution and how to setup a Neural Network with three hidden layers that acts like filters.
+Thanks for reading up until here. I had a ton of fun doing this notebook and got a lot of useful insights on Unbalanced data and how to work with Streamlit applications.
 
 If you want to see more Kaggle solutions, see the Flower Classification Problem or go to my github page. Feel free to reach me on [LinkedIn](https://www.linkedin.com/in/isaiapedro/) or my [Webpage](https://github.com/isaiapedro/Portfolio-Website).
 
