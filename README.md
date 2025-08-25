@@ -14,46 +14,43 @@
 <br>
 
 **To run the ML notebook:**
-With Docker installed, run Docker Desktop and the jupyter notebook image with the following command
+With Docker installed and running, build the Docker image with the following command
 
 <br>
 
 ```
-docker run -it --rm -p 8888:8888 -v "${pwd}:/tf/notebooks" tensorflow/tensorflow:latest-jupyter
+docker build -t churn-app .
 ```
 
 <br>
 
-
-**To run Streamlit:**
-Just run the following command
+And run it
 
 <br>
 
 ```
-streamlit run app.py
+docker run -p 8501 churn-app
 ```
 
 ## Introduction
 
-This repository was made to build a classifier that predicts Churn rates and displays data using a simple pipeline.
+This repository was made to build a classifier that predicts Churn rates and displays data using the streamlit web framework.
 
 <br/>
 
 The data was collected from [this database](https://www.kaggle.com/datasets/abdullah0a/telecom-customer-churn-insights-for-analysis) and it was cleaned and resampled to have a better representation of the minority class.
-After that, I built a RF Classifier that predicted Churn with 96,9% precision in the validation set. The data was displayed in an app with Streamlit. 
+After that, I built a RF Classifier that predicted Churn with 89,3% precision in the validation set. The data was displayed in an app with Streamlit. 
 
 <br/>
-
-The pipeline of the project is based on Airflow to perform scripts that collected Data from a database or API and run both the model and the Streamlit App using Docker.
-The Data was collected in MySQL database to make it easy for all the applications to use, which was also containerized using Docker. The Scheme of the pipeline can be seen below.
-## Data Overview
-
 
 
 ## Results
 
+**Images of the application that can be acessed with [this link]().
 
+![](https://github.com/isaiapedro/churn-prediction/blob/main/assets/homepage.png)
+
+![](https://github.com/isaiapedro/churn-prediction/blob/main/assets/prediction.png)
 
 ## Conclusion
 
