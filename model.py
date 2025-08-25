@@ -2,15 +2,6 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
-# Deep Learning
-import tensorflow as tf
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Input, Dense, Dropout, LSTM, BatchNormalization, Conv1D, MaxPooling1D, Flatten
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 def evaluate_model(y_test_classes, y_pred_test_classes):
     accuracy = accuracy_score(y_test_classes, y_pred_test_classes)
@@ -23,12 +14,10 @@ def evaluate_model(y_test_classes, y_pred_test_classes):
     print(f"Recall: {recall:.3}")
     print(f"F1-score: {f1:.3f}")
 
+
 def randomForest(X_train, X_test, y_train, y_test):
     rf_classifier = RandomForestClassifier(n_estimators=50, random_state=123)
 
     rf_classifier.fit(X_train, y_train)
-
-    y_pred_valid = rf_classifier.predict(X_test)
-    accuracy_valid = accuracy_score(y_test, y_pred_valid)   
 
     return rf_classifier

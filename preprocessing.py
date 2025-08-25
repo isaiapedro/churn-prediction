@@ -1,90 +1,61 @@
 import pandas as pd
 from sklearn.utils import resample
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from scipy.signal import butter, filtfilt
+from sklearn.preprocessing import MinMaxScaler
 import joblib
 
+
 def fillType(df):
-    # Make first row as colum labels
-    df.rename(columns=df.iloc[0], inplace = True)
-    df.drop(df.index[0], inplace = True)
+    # Make first row as column labels
+    df.rename(columns=df.iloc[0], inplace=True)
+    df.drop(df.index[0], inplace=True)
 
-    # Drop missing values
-    df['InternetService'] = df['InternetService'].fillna("None")
+    # Fill empty values
+    df['TotalCharges'] = df['TotalCharges'].replace(' ', 0)
 
-    df['CustomerID'] = df['CustomerID'].astype(str).astype(int)
-    df['Age'] = df['Age'].astype(str).astype(int)
-    df['Gender'] = df['Gender'].astype(str)
-    df['Tenure'] = df['Tenure'].astype(str).astype(int)
-    df['MonthlyCharges'] = df['MonthlyCharges'].astype(str).astype(float)
-    df['ContractType'] = df['ContractType'].astype(str)
-    df['InternetService'] = df['InternetService'].astype(str)
-    df['TotalCharges'] = df['TotalCharges'].astype(str).astype(float)
-    df['TechSupport'] = df['TechSupport'].astype(str)
-    df['Churn'] = df['Churn'].astype(str)
-    
+    # Change data type to string and number
+    df = df.astype('string')
+    df['SeniorCitizen'] = df['SeniorCitizen'].astype('int64')
+    df['tenure'] = df['tenure'].astype('int64')
+    df['MonthlyCharges'] = df['MonthlyCharges'].astype('float')
+    df['TotalCharges'] = df['TotalCharges'].astype('float')
+
     return df
+
 
 def resampleData(df):
     df["Churn"] = df["Churn"].apply(lambda x: 1 if x == "Yes" else 0)
 
-    df_0 = df[df["Churn"] == 0]
+    df_1 = df[df["Churn"] == 1]
 
-    df_0_upsample = resample(df_0, n_samples = 883, replace = True, random_state = 123)
-    df_1 = df[df["Churn"]==1].sample(n =883, random_state=123)
+    df_0 = df[df["Churn"] == 0].sample(n=5174, random_state=123)
+    df_1_upsample = resample(df_1, n_samples=5174, replace=True, random_state=123)
 
-    df = pd.concat([df_1, df_0_upsample])
-    
+    df = pd.concat([df_1_upsample, df_0])
+
     return df
 
+
 def prepareData(df):
-    #Churn
     y = df[["Churn"]]
 
-    #SplitData
-    X = df[["Age", "Gender", "Tenure", "MonthlyCharges","ContractType","InternetService","TechSupport"]]
+    # SplitData
+    X = df[["SeniorCitizen", "Partner", "Dependents", "tenure", "InternetService", "OnlineSecurity",  "Contract", "PaymentMethod", "MonthlyCharges", "TotalCharges"]]
 
-    #Age
-    X.loc[X['Age'] <= 36, 'Age'] = 0
-    X.loc[(X['Age'] > 36) & (X['Age'] <= 42), 'Age'] = 1
-    X.loc[(X['Age'] > 42) & (X['Age'] <= 47), 'Age'] = 2
-    X.loc[(X['Age'] > 47) & (X['Age'] <= 53), 'Age'] = 3
-    X.loc[(X['Age'] > 53), 'Age'] = 4
+    # Encoding categorical variables
+    X["Partner"] = X["Partner"].apply(lambda x: 1 if x == "Yes" else 0)
+    X["Dependents"] = X["Dependents"].apply(lambda x: 1 if x == "Yes" else 0)
+    X["InternetService"] = X["InternetService"].apply(lambda x: 1 if x == "Fiber optic" else 0)
+    X["OnlineSecurity"] = X["OnlineSecurity"].apply(lambda x: 0 if x == "No" else 1)
+    X["Contract"] = X["Contract"].apply(lambda x: 0 if x == "Month-to-month" else 1)
+    X["PaymentMethod"] = X["PaymentMethod"].apply(lambda x: 1 if x == "Electronic check" else 0)
 
-    #Gender
-    X["Gender"] = X["Gender"].apply(lambda x: 1 if x == "Female" else 0)
-    
-    #Tenure
-    X.loc[X['Tenure'] <= 13, 'Tenure'] = 0
-    X.loc[(X['Tenure'] > 13), 'Tenure'] = 1
-    
-    #MonthlyCharges
-    X.loc[X['MonthlyCharges'] <= 60, 'MonthlyCharges'] = 0
-    X.loc[(X['MonthlyCharges'] > 60) & (X['MonthlyCharges'] <= 90), 'MonthlyCharges'] = 1
-    X.loc[(X['MonthlyCharges'] > 90), 'MonthlyCharges'] = 2
+    # Feature Scaling
+    mms = MinMaxScaler()  # Normalization
 
-    X['MonthlyCharges'] = X['MonthlyCharges'].astype(int)
+    X['tenure'] = mms.fit_transform(X[['tenure']])
+    X['MonthlyCharges'] = mms.fit_transform(X[['MonthlyCharges']])
+    X['TotalCharges'] = mms.fit_transform(X[['TotalCharges']])
 
-    #ContractType
-    X["ContractType"] = X["ContractType"].apply(lambda x: 0 if x == "Month-to-Month" else 1)
-    
-    #InternetService
-    X["InternetService"] = X["InternetService"].apply(lambda x: 0 if x == "None" else 1)
+    joblib.dump(mms, "scaler.pkl")
 
-    #TechSupport
-    X["TechSupport"] = X["TechSupport"].apply(lambda x: 0 if x == "No" else 1)
-    
     return X, y
-
-def preprocessData(X,y):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    scaler = StandardScaler()
-
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.fit_transform(X_test)
-
-    joblib.dump(scaler, "scaler.pkl")
-
-    return X_train, X_test, y_train, y_test
