@@ -46,9 +46,12 @@ After that, I built a RF Classifier that predicted Churn with 89,3% precision in
 
 ## Results
 
-**Images of the application that can be acessed with [this link]().
+**Images of the application that can be acessed with [this link](https://churn-dash.streamlit.app/).**
 
 ![](https://github.com/isaiapedro/churn-prediction/blob/main/assets/homepage.png)
+
+<br>
+<br>
 
 ![](https://github.com/isaiapedro/churn-prediction/blob/main/assets/prediction.png)
 
